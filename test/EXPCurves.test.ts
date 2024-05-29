@@ -8,13 +8,16 @@ import {
   inputs,
 } from "./constants";
 
-describe("EXPCurves", async function () {
+describe("Exponential Curve", async function () {
   let expCurves: Contract;
   let owner: any;
 
   before(async function () {
     [owner] = await ethers.getSigners();
-    const EXPCurves = await ethers.getContractFactory("EXPCurves", owner);
+    const EXPCurves = await ethers.getContractFactory(
+      "ExponentialCurve",
+      owner,
+    );
     expCurves = await EXPCurves.deploy();
     await expCurves.deployed();
   });
