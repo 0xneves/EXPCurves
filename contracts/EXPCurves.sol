@@ -5,12 +5,14 @@ import {exp, div} from "@prb/math/src/ud60x18/Math.sol";
 import {wrap, unwrap} from "@prb/math/src/ud60x18/Casting.sol";
 
 // ((EXP(curvature * (timeDelta / totalTimeInterval)) - 1 ) / (EXP(curvature) - 1)) * 100
+// ((EXP(curvature * ( 1 - (timeDelta / totalTimeInterval))) - 1 ) / (EXP(curvature) - 1)) * 100
 contract EXPCurves {
   function curveNormalization(
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature
+    uint256 curvature,
+    bool ascending
   ) public pure returns (uint256) {
     return
       unwrap(
@@ -20,7 +22,8 @@ contract EXPCurves {
               currentTimeframe,
               initialTimeframe,
               finalTimeframe,
-              curvature
+              curvature,
+              ascending
             )
           ),
           wrap(finalExpScaling(curvature))
@@ -36,7 +39,8 @@ contract EXPCurves {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature
+    uint256 curvature,
+    bool ascending
   ) public pure returns (uint256) {
     return
       unwrap(
@@ -46,7 +50,8 @@ contract EXPCurves {
               currentTimeframe,
               initialTimeframe,
               finalTimeframe,
-              curvature
+              curvature,
+              ascending
             )
           )
         )
@@ -57,11 +62,19 @@ contract EXPCurves {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature
+    uint256 curvature,
+    bool ascending
   ) public pure returns (uint256) {
-    return
-      curvature *
-      timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe);
+    if (ascending) {
+      return
+        curvature *
+        timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe);
+    } else {
+      return
+        curvature *
+        (1e18 -
+          timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe));
+    }
   }
 
   function timeElapsedRatio(
