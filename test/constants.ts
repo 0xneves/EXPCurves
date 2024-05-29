@@ -1,0 +1,32 @@
+export const initialTimeframe = 1716980000;
+export const finalTimeframe = 1719980000;
+export const curvature = 5;
+export const inputs = {
+  input1: 1716980000,
+  input2: 1716990000,
+  input3: 1717100000,
+  input4: 1717220000,
+  input5: 1717340000,
+  input6: 1717460000,
+  input7: 1717580000,
+  input8: 1717700000,
+  input9: 1717820000,
+  input10: 1717940000,
+  input11: 1718060000,
+  input12: 1718180000,
+  input13: 1718300000,
+  input14: 1718420000,
+  input15: 1718540000,
+  input16: 1718660000,
+  input17: 1718780000,
+  input18: 1718900000,
+  input19: 1719020000,
+  input20: 1719140000,
+  input21: 1719260000,
+  input22: 1719380000,
+  input23: 1719500000,
+  input24: 1719620000,
+  input25: 1719740000,
+  input26: 1719860000,
+  input27: 1719980000,
+};
