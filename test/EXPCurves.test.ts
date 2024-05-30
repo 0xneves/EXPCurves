@@ -5,6 +5,7 @@ import {
   initialTimeframe,
   finalTimeframe,
   curvature,
+  ncurvature,
   inputs,
 } from "./constants";
 
@@ -14,15 +15,25 @@ describe("Exponential Curve", async function () {
 
   before(async function () {
     [owner] = await ethers.getSigners();
-    const EXPCurves = await ethers.getContractFactory(
-      "ExponentialCurve",
-      owner,
-    );
+    const EXPCurves = await ethers.getContractFactory("ExpCurvesTests", owner);
     expCurves = await EXPCurves.deploy();
     await expCurves.deployed();
   });
 
-  it("Should go from 100% to 0% using single function", async function () {
+  it("Should go from 0 to 100% using negative curvature", async function () {
+    for (let i = 0; i < inputs.length; i++) {
+      const ep = await expCurves.expcurve(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        ncurvature,
+        true,
+      );
+      console.log(ep == 0 ? 0 : Number(ep) / 1e18);
+    }
+  });
+
+  it("Should go from 100% to 0% using expcurve", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await expCurves.expcurve(
         inputs[i],
@@ -35,7 +46,7 @@ describe("Exponential Curve", async function () {
     }
   });
 
-  it("Should go from 0 to 100% using single function", async function () {
+  it("Should go from 0 to 100% using expcurve", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await expCurves.expcurve(
         inputs[i],
@@ -75,153 +86,85 @@ describe("Exponential Curve", async function () {
   });
 
   it("Should get Curve Normalization", async function () {
-    const cn0 = await expCurves.curveNormalization(
-      inputs[0],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cn0.toString());
-    const cn1 = await expCurves.curveNormalization(
-      inputs[1],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cn1.toString());
-    const cn2 = await expCurves.curveNormalization(
-      inputs[2],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cn2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const cn = await expCurves.curveNormalization(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        curvature,
+        true,
+      );
+      console.log(cn.toString());
+    }
   });
 
   it("Should get Final Exp Scaling", async function () {
-    const fes0 = await expCurves.finalExpScaling(curvature);
-    console.log(fes0.toString());
+    const fes = await expCurves.finalExpScaling(curvature);
+    console.log(fes.toString());
   });
 
   it("Should get Exponential (Euler)", async function () {
-    const exp0 = await expCurves.exponential(
-      inputs[0],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(exp0.toString());
-    const exp1 = await expCurves.exponential(
-      inputs[1],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(exp1.toString());
-    const exp2 = await expCurves.exponential(
-      inputs[2],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(exp2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const exp = await expCurves.exponential(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        curvature,
+        true,
+      );
+      console.log(exp.toString());
+    }
   });
 
   it("Should get Curve Scalling Descending", async function () {
-    const cs0 = await expCurves.curveScaling(
-      inputs[0],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      false,
-    );
-    console.log(cs0.toString());
-    const cs1 = await expCurves.curveScaling(
-      inputs[1],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      false,
-    );
-    console.log(cs1.toString());
-    const cs2 = await expCurves.curveScaling(
-      inputs[2],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      false,
-    );
-    console.log(cs2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const cs = await expCurves.curveScaling(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        curvature,
+        false,
+      );
+      console.log(cs.toString());
+    }
   });
 
   it("Should get Curve Scalling Ascending", async function () {
-    const cs0 = await expCurves.curveScaling(
-      inputs[0],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cs0.toString());
-    const cs1 = await expCurves.curveScaling(
-      inputs[1],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cs1.toString());
-    const cs2 = await expCurves.curveScaling(
-      inputs[2],
-      initialTimeframe,
-      finalTimeframe,
-      curvature,
-      true,
-    );
-    console.log(cs2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const cs = await expCurves.curveScaling(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        curvature,
+        true,
+      );
+      console.log(cs.toString());
+    }
   });
 
   it("Should get Time Elapsed Ratio", async function () {
-    const ter0 = await expCurves.timeElapsedRatio(
-      inputs[0],
-      initialTimeframe,
-      finalTimeframe,
-    );
-    console.log(ter0.toString());
-    const ter1 = await expCurves.timeElapsedRatio(
-      inputs[1],
-      initialTimeframe,
-      finalTimeframe,
-    );
-    console.log(ter1.toString());
-    const ter2 = await expCurves.timeElapsedRatio(
-      inputs[2],
-      initialTimeframe,
-      finalTimeframe,
-    );
-    console.log(ter2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const ter = await expCurves.timeElapsedRatio(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+      );
+      console.log(ter.toString());
+    }
   });
 
   it("Should get Total Time Intervals", async function () {
-    const tti0 = await expCurves.totalTimeInterval(
+    const tti = await expCurves.totalTimeInterval(
       initialTimeframe,
       finalTimeframe,
     );
-    console.log(tti0.toString());
+    console.log(tti.toString());
   });
 
   it("Should get Time Deltas", async function () {
-    const td0 = await expCurves.timeDelta(inputs[0], initialTimeframe);
-    console.log(td0.toString());
-    const td1 = await expCurves.timeDelta(inputs[1], initialTimeframe);
-    console.log(td1.toString());
-    const td2 = await expCurves.timeDelta(inputs[2], initialTimeframe);
-    console.log(td2.toString());
+    for (let i = 0; i < inputs.length; i++) {
+      const td = await expCurves.timeDelta(inputs[i], initialTimeframe);
+      console.log(td.toString());
+    }
   });
 });

@@ -1,6 +1,7 @@
 export const initialTimeframe = 1716980000;
 export const finalTimeframe = 1720340000;
 export const curvature = 5;
+export const ncurvature = -5;
 export const inputs = [
   1716980000, 1716990000, 1717100000, 1717220000, 1717340000, 1717460000,
   1717580000, 1717700000, 1717820000, 1717940000, 1718060000, 1718180000,

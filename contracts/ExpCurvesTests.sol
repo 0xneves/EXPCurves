@@ -1,35 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {exp, div} from "@prb/math/src/ud60x18/Math.sol";
-import {wrap, unwrap} from "@prb/math/src/ud60x18/Casting.sol";
+// import {exp} from "@prb/math/src/ud60x18/Math.sol";
+// import {wrap, unwrap} from "@prb/math/src/ud60x18/Casting.sol";
+import {exp} from "@prb/math/src/sd59x18/Math.sol";
+import {wrap, unwrap} from "@prb/math/src/sd59x18/Casting.sol";
 
 // ((EXP(curvature * (timeDelta / totalTimeInterval)) - 1 ) / (EXP(curvature) - 1)) * 100
 // ((EXP(curvature * ( 1 - (timeDelta / totalTimeInterval))) - 1 ) / (EXP(curvature) - 1)) * 100
-contract ExponentialCurve {
+contract ExpCurvesTests {
   function expcurve(
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature,
+    int256 curvature,
     bool ascending
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     if (initialTimeframe > currentTimeframe) revert("underflow");
     if (initialTimeframe > finalTimeframe) revert("underflow");
 
-    uint256 td = currentTimeframe - initialTimeframe;
-    uint256 tti = finalTimeframe - initialTimeframe;
+    int256 td = int(currentTimeframe - initialTimeframe);
+    int256 tti = int(finalTimeframe - initialTimeframe);
 
-    uint256 ter = unwrap(wrap(td) / wrap(tti));
-    uint256 cs;
+    int256 ter = unwrap(wrap(td) / wrap(tti));
+    int256 cs;
     if (ascending) {
-      cs = curvature * ter;
+      cs = curvature * int(ter);
     } else {
-      cs = curvature * (1e18 - ter);
+      cs = curvature * (1e18 - int(ter));
     }
 
-    uint256 expo = unwrap(exp(wrap(cs))) - 1e18;
-    uint256 fes = unwrap(exp(wrap(curvature * 1e18))) - 1e18;
+    int256 expo = unwrap(exp(wrap(cs))) - 1e18;
+    int256 fes = unwrap(exp(wrap(curvature * 1e18))) - 1e18;
 
     return unwrap(wrap(expo) / wrap(fes)) * 100;
   }
@@ -38,27 +40,24 @@ contract ExponentialCurve {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature,
+    int256 curvature,
     bool ascending
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     return
       unwrap(
-        div(
-          wrap(
-            exponential(
-              currentTimeframe,
-              initialTimeframe,
-              finalTimeframe,
-              curvature,
-              ascending
-            )
-          ),
-          wrap(finalExpScaling(curvature))
-        )
+        wrap(
+          exponential(
+            currentTimeframe,
+            initialTimeframe,
+            finalTimeframe,
+            curvature,
+            ascending
+          )
+        ) / wrap(finalExpScaling(curvature))
       ) * 100; // percentage adjustment
   }
 
-  function finalExpScaling(uint256 curvature) public pure returns (uint256) {
+  function finalExpScaling(int256 curvature) public pure returns (int256) {
     return unwrap(exp(wrap(curvature * 1e18))) - 1e18;
   }
 
@@ -66,9 +65,9 @@ contract ExponentialCurve {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature,
+    int256 curvature,
     bool ascending
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     return
       unwrap(
         exp(
@@ -89,9 +88,9 @@ contract ExponentialCurve {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,
-    uint256 curvature,
+    int256 curvature,
     bool ascending
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     if (ascending) {
       return
         curvature *
@@ -108,33 +107,31 @@ contract ExponentialCurve {
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     return
       unwrap(
-        div(
-          wrap(timeDelta(currentTimeframe, initialTimeframe)),
+        wrap(timeDelta(currentTimeframe, initialTimeframe)) /
           wrap(totalTimeInterval(initialTimeframe, finalTimeframe))
-        )
       );
   }
 
   function totalTimeInterval(
     uint256 initialTimeframe,
     uint256 finalTimeframe
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     unchecked {
       if (initialTimeframe > finalTimeframe) revert("underflow");
-      return finalTimeframe - initialTimeframe;
+      return int(finalTimeframe - initialTimeframe);
     }
   }
 
   function timeDelta(
     uint256 currentTimeframe,
     uint256 initialTimeframe
-  ) public pure returns (uint256) {
+  ) public pure returns (int256) {
     unchecked {
       if (initialTimeframe > currentTimeframe) revert("underflow");
-      return currentTimeframe - initialTimeframe;
+      return int(currentTimeframe - initialTimeframe);
     }
   }
 }
