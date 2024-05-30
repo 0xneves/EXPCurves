@@ -4,18 +4,18 @@ pragma solidity ^0.8.20;
 import "./EXPCurve.sol";
 
 contract Valocracy is EXPCurve {
-  struct VotingPower {
+  struct User {
     uint256 votingPower;
     uint32 lastUpdate;
   }
 
-  bool public ascending = true;
+  bool public ascending = false;
   int8 public curvature;
   uint32 public vacationPeriod;
 
-  mapping(address => VotingPower) public votingPower;
+  mapping(address => User) public votingPower;
 
-  function votePower(
+  function balanceOf(
     address account
   ) public view returns (int256 _adjustedPower) {
     uint32 _lastUpdate = votingPower[account].lastUpdate;
@@ -29,12 +29,12 @@ contract Valocracy is EXPCurve {
       ascending
     );
 
-    _adjustedPower = (int(_votingPower) * decay) / 100;
+    _adjustedPower = (int(_votingPower) * decay) / 100 / 1e18;
   }
 
   function mint(address _account, uint256 _votingPower) public {
     votingPower[_account].votingPower = _votingPower;
-    votingPower[_account].votingPower = uint32(block.timestamp);
+    votingPower[_account].lastUpdate = uint32(block.timestamp);
   }
 
   function setCurvature(int8 _curvature) public {
