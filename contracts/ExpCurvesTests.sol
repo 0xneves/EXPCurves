@@ -8,17 +8,18 @@ import {wrap, unwrap} from "@prb/math/src/sd59x18/Casting.sol";
 // ((EXP(curvature * ( 1 - (timeDelta / totalTimeInterval))) - 1 ) / (EXP(curvature) - 1)) * 100
 contract ExpCurvesTests {
   function expcurve(
-    uint256 currentTimeframe,
-    uint256 initialTimeframe,
-    uint256 finalTimeframe,
-    int256 curvature,
+    uint32 currentTimeframe,
+    uint32 initialTimeframe,
+    uint32 finalTimeframe,
+    int8 curvature,
     bool ascending
   ) public pure returns (int256) {
     if (initialTimeframe > currentTimeframe) revert("underflow");
     if (initialTimeframe > finalTimeframe) revert("underflow");
+    if (curvature == 0) revert("invalid curvature");
 
-    int256 td = int(currentTimeframe - initialTimeframe);
-    int256 tti = int(finalTimeframe - initialTimeframe);
+    int256 td = int(uint256(currentTimeframe - initialTimeframe));
+    int256 tti = int(uint256(finalTimeframe - initialTimeframe));
 
     int256 ter = unwrap(wrap(td) / wrap(tti));
     int256 cs;
@@ -29,7 +30,7 @@ contract ExpCurvesTests {
     }
 
     int256 expo = unwrap(exp(wrap(cs))) - 1e18;
-    int256 fes = unwrap(exp(wrap(curvature * 1e18))) - 1e18;
+    int256 fes = unwrap(exp(wrap(int(curvature) * 1e18))) - 1e18;
 
     return unwrap(wrap(expo) / wrap(fes)) * 100;
   }
