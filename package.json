@@ -29,6 +29,7 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "coverage": "npx hardhat coverage"
   }
 }

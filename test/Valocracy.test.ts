@@ -24,9 +24,9 @@ describe("Valocracy", async function () {
     expect(await Valocracy.vacationPeriod()).to.equal(month);
   });
 
-  it("Should mint governance power", async function () {
+  it("Should contribute and earn more governance power", async function () {
     // Using voting power with 18 decimals
-    await Valocracy.mint(owner.address, ethers.utils.parseEther("300"));
+    await Valocracy.contribute(owner.address, ethers.utils.parseEther("300"));
     const user = await Valocracy.votingPower(owner.address);
     const timestamp = (await ethers.provider.getBlock("latest")).timestamp;
     expect(user.votingPower).to.equal(ethers.utils.parseEther("300"));

@@ -5,7 +5,7 @@ import {exp} from "@prb/math/src/sd59x18/Math.sol";
 import {wrap, unwrap} from "@prb/math/src/sd59x18/Casting.sol";
 
 /**
- * @title Exponential Curve
+ * @title Exponential Curves
  * @author https://github.com/0xneves
  * @notice This smart contract implements an advanced exponential curve formula designed to
  * handle various time-based events such as token vesting, game mechanics, unlock schedules,
@@ -13,7 +13,7 @@ import {wrap, unwrap} from "@prb/math/src/sd59x18/Casting.sol";
  * curve formula that allows for smooth, nonlinear transitions over time, providing a more
  * sophisticated and flexible approach compared to linear models.
  */
-abstract contract EXPCurve {
+abstract contract EXPCurves {
   /**
    * @notice The initial timeframe is invalid.
    *
@@ -87,6 +87,7 @@ abstract contract EXPCurve {
     if (initialTimeframe >= finalTimeframe)
       revert EXPCurveInvalidInitialTimeframe();
     if (curvature == 0) revert EXPCurveInvalidCurvature();
+    if (currentTimeframe > finalTimeframe) return 0;
 
     // Calculate the Time Delta and Total Time Interval
     int256 td = int(uint256(currentTimeframe - initialTimeframe));

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./EXPCurve.sol";
+import "./EXPCurves.sol";
 
-contract Valocracy is EXPCurve {
+contract Valocracy is EXPCurves {
   struct User {
     uint256 votingPower;
     uint32 lastUpdate;
@@ -32,7 +32,7 @@ contract Valocracy is EXPCurve {
     _adjustedPower = (int(_votingPower) * decay) / 100 / 1e18;
   }
 
-  function mint(address _account, uint256 _votingPower) public {
+  function contribute(address _account, uint256 _votingPower) public {
     votingPower[_account].votingPower = _votingPower;
     votingPower[_account].lastUpdate = uint32(block.timestamp);
   }
