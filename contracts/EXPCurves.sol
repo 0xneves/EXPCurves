@@ -7,7 +7,7 @@ import {wrap, unwrap} from "@prb/math/src/ud60x18/Casting.sol";
 // ((EXP(curvature * (timeDelta / totalTimeInterval)) - 1 ) / (EXP(curvature) - 1)) * 100
 // ((EXP(curvature * ( 1 - (timeDelta / totalTimeInterval))) - 1 ) / (EXP(curvature) - 1)) * 100
 contract ExponentialCurve {
-  function exponentialPercentage(
+  function expcurve(
     uint256 currentTimeframe,
     uint256 initialTimeframe,
     uint256 finalTimeframe,

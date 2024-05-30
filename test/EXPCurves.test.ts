@@ -24,7 +24,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 100% to 0% using single function", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.exponentialPercentage(
+      const ep = await expCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -37,7 +37,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 0 to 100% using single function", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.exponentialPercentage(
+      const ep = await expCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
