@@ -10,19 +10,19 @@ import {
 } from "./constants";
 
 describe("Exponential Curve", async function () {
-  let expCurves: Contract;
+  let EXPCurves: Contract;
   let owner: any;
 
   before(async function () {
     [owner] = await ethers.getSigners();
-    const EXPCurves = await ethers.getContractFactory("ExpCurvesTests", owner);
-    expCurves = await EXPCurves.deploy();
-    await expCurves.deployed();
+    const Factory = await ethers.getContractFactory("ExpCurvesTests", owner);
+    EXPCurves = await Factory.deploy();
+    await EXPCurves.deployed();
   });
 
   it("Should go from 100% to 0% using negative curvature", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.expcurve(
+      const ep = await EXPCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -35,7 +35,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 0 to 100% using negative curvature", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.expcurve(
+      const ep = await EXPCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -48,7 +48,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 100% to 0% using expcurve", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.expcurve(
+      const ep = await EXPCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -61,7 +61,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 0 to 100% using expcurve", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ep = await expCurves.expcurve(
+      const ep = await EXPCurves.expcurve(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -74,7 +74,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 100% to 0%", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const cn = await expCurves.curveNormalization(
+      const cn = await EXPCurves.curveNormalization(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -87,7 +87,7 @@ describe("Exponential Curve", async function () {
 
   it("Should go from 0 to 100%", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const cn = await expCurves.curveNormalization(
+      const cn = await EXPCurves.curveNormalization(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -100,7 +100,7 @@ describe("Exponential Curve", async function () {
 
   it("Should get Curve Normalization", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const cn = await expCurves.curveNormalization(
+      const cn = await EXPCurves.curveNormalization(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -112,13 +112,13 @@ describe("Exponential Curve", async function () {
   });
 
   it("Should get Final Exp Scaling", async function () {
-    const fes = await expCurves.finalExpScaling(curvature);
+    const fes = await EXPCurves.finalExpScaling(curvature);
     console.log(fes.toString());
   });
 
   it("Should get Exponential (Euler)", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const exp = await expCurves.exponential(
+      const exp = await EXPCurves.exponential(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -131,7 +131,7 @@ describe("Exponential Curve", async function () {
 
   it("Should get Curve Scalling Descending", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const cs = await expCurves.curveScaling(
+      const cs = await EXPCurves.curveScaling(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -144,7 +144,7 @@ describe("Exponential Curve", async function () {
 
   it("Should get Curve Scalling Ascending", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const cs = await expCurves.curveScaling(
+      const cs = await EXPCurves.curveScaling(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -157,7 +157,7 @@ describe("Exponential Curve", async function () {
 
   it("Should get Time Elapsed Ratio", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const ter = await expCurves.timeElapsedRatio(
+      const ter = await EXPCurves.timeElapsedRatio(
         inputs[i],
         initialTimeframe,
         finalTimeframe,
@@ -167,7 +167,7 @@ describe("Exponential Curve", async function () {
   });
 
   it("Should get Total Time Intervals", async function () {
-    const tti = await expCurves.totalTimeInterval(
+    const tti = await EXPCurves.totalTimeInterval(
       initialTimeframe,
       finalTimeframe,
     );
@@ -176,7 +176,7 @@ describe("Exponential Curve", async function () {
 
   it("Should get Time Deltas", async function () {
     for (let i = 0; i < inputs.length; i++) {
-      const td = await expCurves.timeDelta(inputs[i], initialTimeframe);
+      const td = await EXPCurves.timeDelta(inputs[i], initialTimeframe);
       console.log(td.toString());
     }
   });
