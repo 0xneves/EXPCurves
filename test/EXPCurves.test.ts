@@ -20,6 +20,19 @@ describe("Exponential Curve", async function () {
     await expCurves.deployed();
   });
 
+  it("Should go from 100% to 0% using negative curvature", async function () {
+    for (let i = 0; i < inputs.length; i++) {
+      const ep = await expCurves.expcurve(
+        inputs[i],
+        initialTimeframe,
+        finalTimeframe,
+        ncurvature,
+        false,
+      );
+      console.log(ep == 0 ? 0 : Number(ep) / 1e18);
+    }
+  });
+
   it("Should go from 0 to 100% using negative curvature", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await expCurves.expcurve(
