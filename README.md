@@ -12,7 +12,7 @@ This smart contract implements an advanced exponential curve formula designed to
 
 ### How it works?
 
-The exponential curve formula used in this smart contract have two variations - ascending and descending. The ascending curve starts at 0% and increases to 100% over time, while the descending curve starts at 100% and decreases to 0% over time. Both curves are controlled by the following formula:
+The exponential curve formula used in this smart contract has two variations - ascending and descending. The ascending curve starts at 0% and increases to 100% over time, while the descending curve starts at 100% and decreases to 0% over time. Both curves are controlled by the following formula:
 
 ```
 # ascending = ((exp(k * (1 - (t - t0) / (T - t0))) - 1) / (exp(k) - 1)) * 100
