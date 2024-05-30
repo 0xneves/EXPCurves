@@ -22,7 +22,7 @@ describe("Exponential Curve", async function () {
     await expCurves.deployed();
   });
 
-  it("Should go from 100% to 0%", async function () {
+  it("Should go from 100% to 0% using single function", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await expCurves.exponentialPercentage(
         inputs[i],
@@ -35,7 +35,7 @@ describe("Exponential Curve", async function () {
     }
   });
 
-  it("Should go from 0 to 100%", async function () {
+  it("Should go from 0 to 100% using single function", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await expCurves.exponentialPercentage(
         inputs[i],
