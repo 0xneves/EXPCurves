@@ -90,7 +90,7 @@ abstract contract EXPCurves {
     if (curvature == 0 || curvature > 10_000 || curvature < -10_000)
       revert EXPCurveInvalidCurvature();
     if (currentTimeframe > finalTimeframe) {
-      return ascending ? int(0) : int(100 * 1e18);
+      return ascending ? int(100 * 1e18) : int(0);
     }
     // Calculate the Time Delta and Total Time Interval
     int256 td = int(uint256(currentTimeframe - initialTimeframe));

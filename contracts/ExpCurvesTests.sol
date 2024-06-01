@@ -4,40 +4,11 @@ pragma solidity ^0.8.20;
 import {exp} from "@prb/math/src/sd59x18/Math.sol";
 import {wrap, unwrap} from "@prb/math/src/sd59x18/Casting.sol";
 
+import "./EXPCurves.sol";
+
 // ((EXP(curvature * (timeDelta / totalTimeInterval)) - 1 ) / (EXP(curvature) - 1)) * 100
 // ((EXP(curvature * ( 1 - (timeDelta / totalTimeInterval))) - 1 ) / (EXP(curvature) - 1)) * 100
-contract ExpCurvesTests {
-  function expcurve(
-    uint32 currentTimeframe,
-    uint32 initialTimeframe,
-    uint32 finalTimeframe,
-    int16 curvature,
-    bool ascending
-  ) public pure returns (int256) {
-    if (initialTimeframe > currentTimeframe) revert("underflow");
-    if (initialTimeframe > finalTimeframe) revert("underflow");
-    if (curvature == 0 || curvature > 13_300) revert("invalid curvature");
-    if (currentTimeframe > finalTimeframe) {
-      return ascending ? int(0) : int(100 * 1e18);
-    }
-
-    int256 td = int(uint256(currentTimeframe - initialTimeframe));
-    int256 tti = int(uint256(finalTimeframe - initialTimeframe));
-
-    int256 ter = unwrap(wrap(td) / wrap(tti));
-    int256 cs;
-    if (ascending) {
-      cs = (curvature * int(ter)) / 100;
-    } else {
-      cs = (curvature * (1e18 - int(ter))) / 100;
-    }
-
-    int256 expo = unwrap(exp(wrap(cs))) - 1e18;
-    int256 fes = unwrap(exp(wrap(int(curvature) * 1e16))) - 1e18;
-
-    return unwrap(wrap(expo) / wrap(fes)) * 100;
-  }
-
+contract ExpCurvesTests is EXPCurves {
   function curveNormalization(
     uint256 currentTimeframe,
     uint256 initialTimeframe,
