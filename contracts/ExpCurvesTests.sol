@@ -11,12 +11,12 @@ contract ExpCurvesTests {
     uint32 currentTimeframe,
     uint32 initialTimeframe,
     uint32 finalTimeframe,
-    int8 curvature,
+    int16 curvature,
     bool ascending
   ) public pure returns (int256) {
     if (initialTimeframe > currentTimeframe) revert("underflow");
     if (initialTimeframe > finalTimeframe) revert("underflow");
-    if (curvature == 0) revert("invalid curvature");
+    if (curvature == 0 || curvature > 13_300) revert("invalid curvature");
     if (currentTimeframe > finalTimeframe) {
       return ascending ? int(0) : int(100 * 1e18);
     }
@@ -27,13 +27,13 @@ contract ExpCurvesTests {
     int256 ter = unwrap(wrap(td) / wrap(tti));
     int256 cs;
     if (ascending) {
-      cs = curvature * int(ter);
+      cs = (curvature * int(ter)) / 100;
     } else {
-      cs = curvature * (1e18 - int(ter));
+      cs = (curvature * (1e18 - int(ter))) / 100;
     }
 
     int256 expo = unwrap(exp(wrap(cs))) - 1e18;
-    int256 fes = unwrap(exp(wrap(int(curvature) * 1e18))) - 1e18;
+    int256 fes = unwrap(exp(wrap(int(curvature) * 1e16))) - 1e18;
 
     return unwrap(wrap(expo) / wrap(fes)) * 100;
   }
@@ -60,7 +60,8 @@ contract ExpCurvesTests {
   }
 
   function finalExpScaling(int256 curvature) public pure returns (int256) {
-    return unwrap(exp(wrap(curvature * 1e18))) - 1e18;
+    // using 1e16 because the curvature is divided by 100 (2 decimals)
+    return unwrap(exp(wrap(curvature * 1e16))) - 1e18;
   }
 
   function exponential(
@@ -95,13 +96,21 @@ contract ExpCurvesTests {
   ) public pure returns (int256) {
     if (ascending) {
       return
-        curvature *
-        timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe);
+        int(
+          curvature *
+            timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe)
+        ) / 100;
     } else {
       return
-        curvature *
-        (1e18 -
-          timeElapsedRatio(currentTimeframe, initialTimeframe, finalTimeframe));
+        int(
+          curvature *
+            (1e18 -
+              timeElapsedRatio(
+                currentTimeframe,
+                initialTimeframe,
+                finalTimeframe
+              ))
+        ) / 100;
     }
   }
 
