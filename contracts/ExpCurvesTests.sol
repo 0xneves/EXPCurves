@@ -17,6 +17,9 @@ contract ExpCurvesTests {
     if (initialTimeframe > currentTimeframe) revert("underflow");
     if (initialTimeframe > finalTimeframe) revert("underflow");
     if (curvature == 0) revert("invalid curvature");
+    if (currentTimeframe > finalTimeframe) {
+      return ascending ? int(0) : int(100 * 1e18);
+    }
 
     int256 td = int(uint256(currentTimeframe - initialTimeframe));
     int256 tti = int(uint256(finalTimeframe - initialTimeframe));

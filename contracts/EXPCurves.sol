@@ -87,8 +87,9 @@ abstract contract EXPCurves {
     if (initialTimeframe >= finalTimeframe)
       revert EXPCurveInvalidInitialTimeframe();
     if (curvature == 0) revert EXPCurveInvalidCurvature();
-    if (currentTimeframe > finalTimeframe) return 0;
-
+    if (currentTimeframe > finalTimeframe) {
+      return ascending ? int(0) : int(100 * 1e18);
+    }
     // Calculate the Time Delta and Total Time Interval
     int256 td = int(uint256(currentTimeframe - initialTimeframe));
     int256 tti = int(uint256(finalTimeframe - initialTimeframe));
