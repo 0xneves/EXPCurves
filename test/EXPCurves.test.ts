@@ -20,6 +20,48 @@ describe("Exponential Curve", async function () {
     await EXPCurves.deployed();
   });
 
+  it("Should return 100% when ascending and currentTimeframe is bigger than finalTimeframe", async function () {
+    const curve = await EXPCurves.expcurve(1000, 100, 200, curvature, false);
+    expect(curve).to.equal(0);
+  });
+
+  it("Should return 0% when descending and currentTimeframe is bigger than finalTimeframe", async function () {
+    const curve = await EXPCurves.expcurve(1000, 100, 200, curvature, true);
+    expect(curve).to.equal(ethers.utils.parseEther("100"));
+  });
+
+  it("Should revert when initialTimeframe is bigger than currentTimeframe", async function () {
+    await expect(
+      EXPCurves.expcurve(50, 100, 200, curvature, true),
+    ).to.be.revertedWithCustomError(
+      EXPCurves,
+      "EXPCurveInvalidInitialTimeframe",
+    );
+  });
+
+  it("Should revert when initialTimeframe is equal or bigger than currentTimeframe", async function () {
+    await expect(
+      EXPCurves.expcurve(120, 100, 100, curvature, true),
+    ).to.be.revertedWithCustomError(
+      EXPCurves,
+      "EXPCurveInvalidInitialTimeframe",
+    );
+  });
+
+  it("Should revert when curvature is invalid", async function () {
+    await expect(
+      EXPCurves.expcurve(150, 100, 200, 0, true),
+    ).to.be.revertedWithCustomError(EXPCurves, "EXPCurveInvalidCurvature");
+
+    await expect(
+      EXPCurves.expcurve(150, 100, 200, 10001, true),
+    ).to.be.revertedWithCustomError(EXPCurves, "EXPCurveInvalidCurvature");
+
+    await expect(
+      EXPCurves.expcurve(150, 100, 200, -10001, true),
+    ).to.be.revertedWithCustomError(EXPCurves, "EXPCurveInvalidCurvature");
+  });
+
   it("Should go from 100% to 0% using negative curvature", async function () {
     for (let i = 0; i < inputs.length; i++) {
       const ep = await EXPCurves.expcurve(

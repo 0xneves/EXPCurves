@@ -53,14 +53,4 @@ describe("Valocracy", async function () {
     const finalVotingPower = await Valocracy.balanceOf(owner.address);
     expect(finalVotingPower).to.equal(ethers.utils.parseEther("0"));
   });
-
-  it("Should return 0% when ascending and currentTimeframe is bigger than finalTimeframe", async function () {});
-
-  it("Should return 100% when descending and currentTimeframe is bigger than finalTimeframe", async function () {});
-
-  it("Should revert when initialTimeframe is bigger than currentTimeframe", async function () {});
-
-  it("Should revert when initialTimeframe is equal or bigger than currentTimeframe", async function () {});
-
-  it("Should revert when curvature is equals 0", async function () {});
 });
