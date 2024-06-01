@@ -14,20 +14,23 @@ This smart contract implements an advanced exponential curve formula designed to
 
 The exponential curve formula used in this smart contract has two variations - ascending and descending. The ascending curve starts at 0% and increases to 100% over time, while the descending curve starts at 100% and decreases to 0% over time. Both curves are controlled by the following formula:
 
-```
-# ascending = ((exp(k * (1 - (t - t0) / (T - t0))) - 1) / (exp(k) - 1)) * 100
-# descenging = ((exp(k * ((t - t0) / (T - t0))) - 1) / (exp(k) - 1)) * 100
-```
+#### Ascending Curve
+
+$$\frac{\exp(k \cdot \frac{t - t_0}{T - t_0}) - 1}{\exp(k) - 1} \cdot 100$$
+
+#### Descending Curve
+
+$$\frac{\exp(k \cdot (1 - \frac{t - t_0}{T - t_0})) - 1}{\exp(k) - 1} \cdot 100$$
 
 Where:
 
 - t is the current timestamp
 - t0 is the start timestamp
 - T is the end timestamp
-- k is the curvature factor, determining the steepness of the curve
+- k is the curvature factor, determining the steepness of the curve (2 decimals precision)
 - exp() is the exponential function with base 'E' (Euler's number, approximately 2.71828)
 
-The curvature factor (k) allows for fine-tuning the curve's shape, providing a wide range of possibilities for customizing the curve's behavior. A higher k value results in a steeper curve, while a lower k value results in a flatter curve. This flexibility enables developers to create complex time-based scenarios with precise control over the curve's progression.
+The curvature factor (k) allows for fine-tuning the curve's shape, providing a wide range of possibilities for customizing the curve's behavior. A higher k value results in a steeper curve, while a lower k value results in a flatter curve. This flexibility enables developers to create complex time-based scenarios with precise control over the curve's progression. For better precision, the curvature factor is an integer with two (2) decimal places, allowing for a range of -100.00 to 100.00.
 
 ![Ascending with positive curvature](docs/ascending_with_positive_curvature.png)
 
@@ -40,7 +43,7 @@ The smart contract provides a function called `expcurve` that calculates the cur
 - The `initialTimeframe` must be less than or equal to the `currentTimeframe`
 - The `initialTimeframe` must be less than the `finalTimeframe`
 - The `curvature` cannot be zero
-- The `curvature` must fit between `-127` and `127`
+- The `curvature` must fit between `-100.00` and `100.00` (-10_000 ~ 10_000 int16 with 2 decimals precision)
 - The curve direction when `true` is ascending and when `false` is descending
 
 ```solidity
@@ -48,7 +51,7 @@ function expcurve(
     uint32 currentTimeframe,
     uint32 initialTimeframe,
     uint32 finalTimeframe,
-    int8 curvature,
+    int16 curvature,
     bool ascending
   ) public pure virtual returns (int256);
 ```
@@ -102,3 +105,6 @@ If you find any security issues, please report them via [Telegram](https://t.me/
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+$$
+$$

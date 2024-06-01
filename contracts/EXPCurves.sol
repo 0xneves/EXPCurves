@@ -29,11 +29,11 @@ abstract contract EXPCurves {
    * Requirements:
    *
    * - It cannot be zero
-   * - Cannot be bigger than type uint of value 133 while using regular unix timestamps
-   * as inputs, or it blows up the emulator. Thus it is capped at int8 or 127.
+   * - The curvature cannot be bigger than 10000 or smaller than -10000 (2 decimals precision)
    *
-   * NOTE: For negative values it can go way further than type int of value -133, but there
-   * is no need to go that far.
+   * NOTE: Cannot be bigger than type uint of value 133 while using regular unix timestamps.
+   * For negative values it can go way further than type int of value -133, but there is no
+   * need to go that far.
    */
   error EXPCurveInvalidCurvature();
 
@@ -52,7 +52,7 @@ abstract contract EXPCurves {
    * - t is the current timestamp
    * - t0 is the start timestamp
    * - T is the end timestamp
-   * - k is the curvature factor, determining the steepness of the curve
+   * - k is the curvature factor, determining the steepness of the curve (2 decimals precision)
    * - exp() is the exponential function with base 'E' (Euler's number, approximately 2.71828)
    *
    * Requirements:
@@ -60,6 +60,7 @@ abstract contract EXPCurves {
    * - The initial timestamp must be less than or equal to the current timestamp
    * - The initial timestamp must be less than the final timestamp
    * - The curvature cannot be zero
+   * - The curvature cannot be bigger than 10000 or smaller than -10000 (2 decimals precision)
    *
    * NOTE: To avoid precision issues, the formula uses fixed-point math with 18 decimals.
    * When returning this function result, make sure to adjust the output values accordingly.
@@ -79,14 +80,15 @@ abstract contract EXPCurves {
     uint32 currentTimeframe,
     uint32 initialTimeframe,
     uint32 finalTimeframe,
-    int8 curvature,
+    int16 curvature,
     bool ascending
   ) public pure virtual returns (int256) {
     if (initialTimeframe > currentTimeframe)
       revert EXPCurveInvalidInitialTimeframe();
     if (initialTimeframe >= finalTimeframe)
       revert EXPCurveInvalidInitialTimeframe();
-    if (curvature == 0) revert EXPCurveInvalidCurvature();
+    if (curvature == 0 || curvature > 10_000 || curvature < -10_000)
+      revert EXPCurveInvalidCurvature();
     if (currentTimeframe > finalTimeframe) {
       return ascending ? int(0) : int(100 * 1e18);
     }
@@ -98,15 +100,15 @@ abstract contract EXPCurves {
     int256 ter = unwrap(wrap(td) / wrap(tti));
     int256 cs; // Curve Scaling
     if (ascending) {
-      cs = curvature * int(ter);
+      cs = (curvature * int(ter)) / 100;
     } else {
-      cs = curvature * (1e18 - int(ter));
+      cs = (curvature * (1e18 - int(ter))) / 100;
     }
 
     // Calculate the Exponential Decay
     int256 expo = unwrap(exp(wrap(cs))) - 1e18;
     // Calculate the Final Exponential Scaling
-    int256 fes = unwrap(exp(wrap(int(curvature) * 1e18))) - 1e18;
+    int256 fes = unwrap(exp(wrap(int(curvature) * 1e16))) - 1e18;
 
     // Normalize the Exponential Decay
     return unwrap(wrap(expo) / wrap(fes)) * 100;
