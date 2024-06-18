@@ -3,6 +3,13 @@ pragma solidity ^0.8.20;
 
 import "./EXPCurves.sol";
 
+/**
+ * @title Valocracy
+ * @dev This contract implements a voting power system that decays over time
+ * using EXP curves. The balanceOf function resembles a token balance in
+ * ERC20Votes for Governance usage, but it decays over time based on the user's
+ * voting power and the curvature factor.
+ */
 contract Valocracy is EXPCurves {
   struct User {
     uint256 votingPower;
