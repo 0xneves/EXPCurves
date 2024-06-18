@@ -24,6 +24,7 @@ abstract contract EXPCurves is IEXPCurves {
    * - Must be less than the final timestamp.
    */
   error EXPCurveInvalidInitialTimeframe();
+
   /**
    * @notice The curvature factor is invalid.
    *
